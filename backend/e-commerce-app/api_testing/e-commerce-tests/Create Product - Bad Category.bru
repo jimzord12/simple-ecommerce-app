@@ -1,0 +1,26 @@
+meta {
+  name: Create Product - Bad Category
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/api/products
+  body: json
+  auth: none
+}
+
+body:json {
+   {
+      "name": "Whatever",
+      "description": "whatever",
+      "category": "whatever",
+      "price": 34.99,
+      "stock": 150
+    }
+}
+
+docs {
+  PostgreSQL holds the definitiopn for the category type.
+  Thus, the error originates from the DB.
+}

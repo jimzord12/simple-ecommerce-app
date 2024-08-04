@@ -1,0 +1,25 @@
+meta {
+  name: Delete Product
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:8080/api/products/5
+  body: json
+  auth: none
+}
+
+headers {
+  Content-type: application/json
+}
+
+body:json {
+   {
+      "product_name": "Asus Laptop",
+      "description": "Gaming Laptop",
+      "category": "electronic_devices",
+      "price": 2750.00,
+      "stock_quantity": 2
+    }
+}

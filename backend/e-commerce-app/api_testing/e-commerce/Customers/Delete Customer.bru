@@ -1,0 +1,15 @@
+meta {
+  name: Delete Customer
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:8080/api/customers/3
+  body: json
+  auth: none
+}
+
+headers {
+  Content-type: application/json
+}

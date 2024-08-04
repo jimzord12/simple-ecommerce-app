@@ -1,0 +1,24 @@
+meta {
+  name: Update Customer
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:8080/api/customers/3
+  body: json
+  auth: none
+}
+
+headers {
+  Content-type: application/json
+}
+
+body:json {
+   {
+      "first_name": "Jimzord",
+      "last_name": "Handsome Devil",
+      "email": "mad-power@madmen.com",
+      "password": "87654321"
+    }
+}

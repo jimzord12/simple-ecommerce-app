@@ -1,0 +1,21 @@
+meta {
+  name: Delete Order
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:8080/api/orders/5
+  body: json
+  auth: none
+}
+
+headers {
+  Content-type: application/json
+}
+
+body:json {
+  {
+    "status": "shipped"
+  }
+}

@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"time"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
+	_ "github.com/lib/pq"
 )
 
 // Service represents a service that interacts with a database.
@@ -42,15 +42,30 @@ var (
 )
 
 func New() Service {
+	fmt.Println("Database Name:", database)
+	fmt.Println("host:", host)
+	fmt.Println("port:", port)
+	fmt.Println("username:", username)
+	fmt.Println("password:", password)
+	fmt.Println("SCHEMA:", schema)
+
 	// Reuse Connection
 	if dbInstance != nil {
 		return dbInstance
 	}
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", username, password, host, port, database, schema)
-	db, err := sql.Open("pgx", connStr)
+
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, username, password, database)
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Test the database connection
+	err = db.Ping()
+	if err != nil {
+		log.Fatal("Failed to ping database:\n\t", err)
+	}
+
 	dbInstance = &service{
 		db: db,
 	}
