@@ -58,6 +58,31 @@ There should be 4 tables:
 
 ![Verifying the tables](/backend/e-commerce-app/internal/database/sql/img_for_readme/pgAdmin_004.png)
 
+### Making our Developing Life easier...
+
+Most of the time when trying to connect with Databases for the very first time a lot of authentication errors start to pop-up.
+
+Therefore, I recommend turning off a couple of security features to drasticly decrease the amount of headaches and broken montiors.
+
+1. **Turning off SSL**
+
+   - This can be achieved by navigating into the PostgreSQL's installation folder. For Windows users, this should be here: `C:\Program Files\PostgreSQL\16\data\postgresql.conf`
+   - Open it with VS Code or something similar, and find the line that says "#ssl = off"
+   - Simply remove the '#', aka uncomment that line of code.
+   - Finally, you need to restart the running PostgreSQL Service. For Windows, write "Services" in the windows search bar. Then find the "postgresql-x64-{version}" service, select it and then click on Restart service
+
+   ![Restarting Service](/backend/e-commerce-app/internal/database/sql/img_for_readme/pgAdmin_005.png)
+
+2. **Turning off Password Auth**
+
+   - For this go to the same PostgreSQL directory as before: `C:\Program Files\PostgreSQL\16\data\postgresql.conf`
+   - Find and Open the `pg_hba.conf` file
+   - Scroll all the way down until you see some uncommented code
+   - Change whatever is under the "METHOD" Column to 'trust'
+   - Super Important, you must **Restart the Service** as shown previously in "Turning off SSL"
+
+     ![No Password Auth](/backend/e-commerce-app/internal/database/sql/img_for_readme/pgAdmin_006.png)
+
 ### Nicely Done! Good Job 🎉
 
 You have created a PostgreSQL Database named "e_shop" that contains a schema of 4 tables and it's hosted locally on your machine.

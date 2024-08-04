@@ -10,6 +10,10 @@ Technologies used:
 
 ## Getting Started
 
+Regarding installing PostgreSQL and creating a Database read this: [PostgreSQL README](./internal/database/sql/README.md)
+
+For the rest keep reading:
+
 1. Create an empty directory (folder).
 2. Navigate there using your terminal.
 3. Copy and paste this command to download the project's code:
