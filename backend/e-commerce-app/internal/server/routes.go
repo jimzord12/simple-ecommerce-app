@@ -415,6 +415,7 @@ func DeleteOrder(w http.ResponseWriter, r *http.Request) {
 
 /////////////////////////// ORDER ITEMS //////////////////////////////////
 
+// Tested with Bruno ✅
 func GetOrderItems(w http.ResponseWriter, r *http.Request) {
 	orderID := chi.URLParam(r, "order_id")
 	rows, err := db.Query("SELECT order_item_id, order_id, product_id, quantity, price FROM order_items WHERE order_id = $1", orderID)
@@ -442,6 +443,7 @@ func GetOrderItems(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(orderItems)
 }
 
+// Tested with Bruno ✅
 func GetOrderItemByID(w http.ResponseWriter, r *http.Request) {
 	orderID := chi.URLParam(r, "order_id")
 	id := chi.URLParam(r, "id")
@@ -459,6 +461,7 @@ func GetOrderItemByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(oi)
 }
 
+// Tested with Bruno ✅
 func CreateOrderItem(w http.ResponseWriter, r *http.Request) {
 	orderID := chi.URLParam(r, "order_id")
 	var oi OrderItem
@@ -468,9 +471,40 @@ func CreateOrderItem(w http.ResponseWriter, r *http.Request) {
 	}
 	oi.OrderID, _ = strconv.Atoi(orderID)
 
-	err := db.QueryRow(
+	// Getting Product Info
+	var p Product
+
+	err := db.QueryRow("SELECT price, stock_quantity FROM products WHERE product_id = $1", oi.ProductID).Scan(&p.Price, &p.Stock)
+	if err == sql.ErrNoRows {
+		http.Error(w, "Product not found", http.StatusNotFound)
+		return
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Checking if the Client requests more Items than we have in Stock
+	if p.Stock < oi.Quantity {
+		http.Error(w, fmt.Sprintf("Insufficient Stock Quantity for Product (%s)", p.Name), http.StatusUnprocessableEntity)
+		return
+	}
+
+	// Decreasing the Stock Quantity of the Product
+	newQuantity := p.Stock - oi.Quantity
+	_, err = db.Exec(
+		"UPDATE products SET stock_quantity=$1 WHERE product_id=$2",
+		newQuantity, oi.ProductID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Calculating the Price based on the Product Price + the requested Quantity
+	// And Create a new Order Item
+	price := p.Price * float64(oi.Quantity)
+	err = db.QueryRow(
 		"INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4) RETURNING order_item_id",
-		oi.OrderID, oi.ProductID, oi.Quantity, oi.Price).Scan(&oi.ID)
+		oi.OrderID, oi.ProductID, oi.Quantity, price).Scan(&oi.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -480,6 +514,7 @@ func CreateOrderItem(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(oi)
 }
 
+// Tested with Bruno ✅
 func UpdateOrderItem(w http.ResponseWriter, r *http.Request) {
 	orderID := chi.URLParam(r, "order_id")
 	id := chi.URLParam(r, "id")
@@ -491,8 +526,46 @@ func UpdateOrderItem(w http.ResponseWriter, r *http.Request) {
 	oi.ID, _ = strconv.Atoi(id)
 	oi.OrderID, _ = strconv.Atoi(orderID)
 
-	_, err := db.Exec("UPDATE order_items SET product_id=$1, quantity=$2, price=$3 WHERE order_item_id=$4 AND order_id=$5",
-		oi.ProductID, oi.Quantity, oi.Price, oi.ID, oi.OrderID)
+	// Getting Product ID using Order Item ID
+	err := db.QueryRow("SELECT product_id FROM order_items WHERE order_item_id = $1", id).Scan(&oi.ProductID)
+	if err == sql.ErrNoRows {
+		http.Error(w, "Product not found", http.StatusNotFound)
+		return
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Getting Product Info using Product ID
+	var p Product
+
+	err = db.QueryRow("SELECT price, stock_quantity FROM products WHERE product_id = $1", oi.ProductID).Scan(&p.Price, &p.Stock)
+	if err == sql.ErrNoRows {
+		http.Error(w, "Product not found", http.StatusNotFound)
+		return
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if p.Stock < oi.Quantity {
+		http.Error(w, fmt.Sprintf("Insufficient Stock Quantity for Product (%s)", p.Name), http.StatusUnprocessableEntity)
+		return
+	}
+
+	// Decreasing the Stock Quantity of the Product
+	newQuantity := p.Stock - oi.Quantity
+	_, err = db.Exec(
+		"UPDATE products SET stock_quantity=$1 WHERE product_id=$2",
+		newQuantity, oi.ProductID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	price := float64(oi.Quantity) * p.Price
+	_, err = db.Exec("UPDATE order_items SET quantity=$1, price=$2 WHERE order_item_id=$3 AND order_id=$4",
+		oi.Quantity, price, oi.ID, oi.OrderID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -502,6 +575,7 @@ func UpdateOrderItem(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(oi)
 }
 
+// Tested with Bruno ✅
 func DeleteOrderItem(w http.ResponseWriter, r *http.Request) {
 	orderID := chi.URLParam(r, "order_id")
 	id := chi.URLParam(r, "id")

@@ -6,7 +6,7 @@ Technologies used:
 
 - Database: **PostgreSQL**
 - Web Server: **Go http/net + chi**
-- Frontend: **Next.js 14**
+- Frontend: **Next.js 14 (Typescript)**
 
 ## Getting Started
 
@@ -36,9 +36,15 @@ go mod tidy
 make run
 ```
 
-## ⚠ Important
+## ⚠ Important - Add .env to `.gitignore`
 
-In the simple-ecommerce-app/backend/e-commerce-app directory, find the 
+In the following directory:
+
+```
+simple-ecommerce-app/backend/e-commerce-app
+```
+
+Find and Open a file named `.gitignore` and uncomment **line 26**, `.env` files usually contain private variables and should NOT be uploaded to a remote repository for security reasons.
 
 ## MakeFile
 

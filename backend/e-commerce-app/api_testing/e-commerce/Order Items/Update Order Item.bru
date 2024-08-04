@@ -1,0 +1,21 @@
+meta {
+  name: Update Order Item
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:8080/api/orders/1/items/2
+  body: json
+  auth: none
+}
+
+headers {
+  Content-type: application/json
+}
+
+body:json {
+  {
+    "quantity": 55
+  }
+}

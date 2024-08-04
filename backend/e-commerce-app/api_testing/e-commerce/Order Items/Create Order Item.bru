@@ -1,0 +1,23 @@
+meta {
+  name: Create Order Item
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/api/orders/1/items
+  body: json
+  auth: none
+}
+
+headers {
+  Content-type: application/json
+}
+
+body:json {
+  {
+    "order_id": 3,
+    "product_id": 3,
+    "quantity": 26
+  }
+}
