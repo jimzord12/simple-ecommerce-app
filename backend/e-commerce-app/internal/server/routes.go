@@ -278,19 +278,8 @@ func UpdateCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 	c.ID, _ = strconv.Atoi(id)
 
-	// Getting the Created at field
-	var createdAt string
-	err := db.QueryRow("SELECT created_at FROM customers WHERE customer_id = $1", id).Scan(&createdAt)
-	if err == sql.ErrNoRows {
-		http.Error(w, "Customer not found", http.StatusNotFound)
-		return
-	} else if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	_, err = db.Exec("UPDATE customers SET first_name=$1, last_name=$2, email=$3, password=$4, created_at=$5 WHERE customer_id=$6",
-		c.FirstName, c.LastName, c.Email, c.Password, createdAt, c.ID)
+	_, err := db.Exec("UPDATE customers SET first_name=$1, last_name=$2, email=$3, password=$4 WHERE customer_id=$5",
+		c.FirstName, c.LastName, c.Email, c.Password, c.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
