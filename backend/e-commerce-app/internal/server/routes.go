@@ -18,6 +18,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
+	// Auth
+	r.Post("/api/login", LoginHandler)
+	r.Post("/api/register", RegisterHandler)
+
 	// Product Routes
 	r.Get("/api/products", GetProducts)
 	r.Get("/api/products/{id}", GetProductByID)
@@ -46,44 +50,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Put("/api/orders/{order_id}/items/{id}", UpdateOrderItem)
 	r.Delete("/api/orders/{order_id}/items/{id}", DeleteOrderItem)
 
-	//////// JWT ///////
-
-	// // Public routes
-	// r.Post("/api/login", Login)
-
-	// // Protected routes
-	// r.Group(func(r chi.Router) {
-	// 	r.Use(authenticate)
-
-	// 	// Product Routes
-	// 	r.Get("/api/products", GetProducts)
-	// 	r.Get("/api/products/{id}", GetProductByID)
-	// 	r.Post("/api/products", CreateProduct)
-	// 	r.Put("/api/products/{id}", UpdateProduct)
-	// 	r.Delete("/api/products/{id}", DeleteProduct)
-
-	// 	// Customer Routes
-	// 	r.Get("/api/customers", GetCustomers)
-	// 	r.Get("/api/customers/{id}", GetCustomerByID)
-	// 	r.Post("/api/customers", CreateCustomer)
-	// 	r.Put("/api/customers/{id}", UpdateCustomer)
-	// 	r.Delete("/api/customers/{id}", DeleteCustomer)
-
-	// 	// Order Routes
-	// 	r.Get("/api/orders", GetOrders)
-	// 	r.Get("/api/orders/{id}", GetOrderByID)
-	// 	r.Post("/api/orders", CreateOrder)
-	// 	r.Put("/api/orders/{id}", UpdateOrder)
-	// 	r.Delete("/api/orders/{id}", DeleteOrder)
-
-	// 	// Order Items Routes
-	// 	r.Get("/api/orders/{order_id}/items", GetOrderItems)
-	// 	r.Get("/api/orders/{order_id}/items/{id}", GetOrderItemByID)
-	// 	r.Post("/api/orders/{order_id}/items", CreateOrderItem)
-	// 	r.Put("/api/orders/{order_id}/items/{id}", UpdateOrderItem)
-	// 	r.Delete("/api/orders/{order_id}/items/{id}", DeleteOrderItem)
-	// })
-
 	return r
 }
 
@@ -97,6 +63,61 @@ type Service = database.Service
 
 // Database Instance
 var db *sql.DB = database.New().DB()
+
+// / Auth Handlers ///
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	// Decoding the Received Data (Expecting: email, password)
+	var c Customer
+	if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Getting users password using their email
+	var dbPassword string
+	err := db.QueryRow("SELECT password FROM customers WHERE email = $1", c.Email).Scan(&dbPassword)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Handling Wrong Password
+	if c.Password != dbPassword {
+		http.Error(w, "auth_error: wrong password (401)", http.StatusUnauthorized)
+		return
+	}
+
+	// Successful authentication
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(struct {
+		Success bool `json:"success"`
+	}{
+		Success: true,
+	})
+}
+
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	var c Customer
+	if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err := db.QueryRow(
+		"INSERT INTO customers (email, password, created_at) VALUES ($1, $2, CURRENT_TIMESTAMP) RETURNING customer_id",
+		c.Email, c.Password).Scan(&c.ID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(c)
+}
 
 /// Product Handlers ///
 

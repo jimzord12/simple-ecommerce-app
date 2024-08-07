@@ -1,40 +1,31 @@
-# Project e-commerce-app
-
-This is a very simple e-commerce example project.
+# The Backend
 
 Technologies used:
 
 - Database: **PostgreSQL**
-- Web Server: **Go http/net + chi**
-- Frontend: **Next.js 14 (Typescript)**
+- Web Server: **Go's http/net + chi**
 
 ## Getting Started
 
 Regarding installing PostgreSQL and creating a Database read this: [PostgreSQL README](./internal/database/sql/README.md)
 
-For the rest keep reading:
+You will need to download and install the Go Programming Language [Official download](https://go.dev/doc/install)
 
-1. Create an empty directory (folder).
-2. Navigate there using your terminal.
-3. Copy and paste this command to download the project's code:
+Now we need to download the Backend's dependencies (aka, code other devs have written so that we don't have to 😁)
 
-```
-git clone https://github.com/jimzord12/simple-ecommerce-app.git
-```
-
-4. Next, you to need navigate to the "e-commerce-app" directory. Copy and paste this to the terminal:
+4. Navigate to the "e-commerce-app" directory. Copy and paste this to the terminal:
 
 ```
 cd ./backend/e-commerce-app
 ```
 
-5. Now, you need to download the project's dependecies, to do so run this:
+5. To download the Deps, run this command:
 
 ```
 go mod tidy
 ```
 
-6. Finally, enter the following command to run the App:
+6. To run the App:
 
 ```
 make run
@@ -50,13 +41,7 @@ simple-ecommerce-app/backend/e-commerce-app
 
 Find and Open a file named `.gitignore` and uncomment **line 26**, `.env` files usually contain private variables and should NOT be uploaded to a remote repository for security reasons.
 
-## MakeFile
-
-run all make commands with clean tests
-
-```bash
-make all build
-```
+## MakeFile - Commands
 
 build the application
 
@@ -68,30 +53,6 @@ run the application
 
 ```bash
 make run
-```
-
-Create DB container
-
-```bash
-make docker-run
-```
-
-Shutdown DB container
-
-```bash
-make docker-down
-```
-
-live reload the application
-
-```bash
-make watch
-```
-
-run the test suite
-
-```bash
-make test
 ```
 
 clean up binary from the last build

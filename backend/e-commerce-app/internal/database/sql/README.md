@@ -1,8 +1,19 @@
 # How to setup a PostgreSQL DB using pgAdmin4
 
-### 1. Download pgAdmin4
+### 1. Download and Install PostgreSQL
 
-- [Official Page](https://www.pgadmin.org/download/)
+- [PostgreSQL - Official Page](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
+
+**PostgreSQL** is the app/service that will run on your computer in the background. It 
+
+**pgAdmin** is GUI (Graphical User Interface) for PostgreSQL. It makes it a lot easier to create and manage our PostgreSQL databases.
+
+**⚠ Very Important** 
+
+In the installation Wizard, you will be asked to provide 2 things:
+
+1. The Super-User (postgres) *Password*, insert this: **12345678!@#** 
+2. The *Port*, leave it as is: **5432** 
 
 ### 2. Creating a new DB
 
