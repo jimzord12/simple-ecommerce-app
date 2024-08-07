@@ -19,6 +19,10 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
       throw new Error((await res.text()) || res.statusText);
     }
 
+    if (res.status === 204) {
+      return null;
+    }
+
     return res.json();
   } catch (error: unknown) {
     console.error("Error in apiFetch:", (error as Error).message);

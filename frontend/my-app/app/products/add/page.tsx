@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ProductCategory } from "../../../types/db_custom_types";
 import { useState } from "react";
 
@@ -16,7 +17,7 @@ const AddProductPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/products", {
+      const res = await fetch("/api/products/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,44 +50,49 @@ const AddProductPage = () => {
   };
 
   return (
-    <div>
-      <h1>Add Product</h1>
+    <div className="p-2">
+      <h1 className=" text-4xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text font-bold">
+        Adding a Product
+      </h1>
       {error && <div style={{ color: "red" }}>Error: {error}</div>}
       {success && (
         <div style={{ color: "green" }}>Product added successfully!</div>
       )}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <div className="p-4">
-          <label>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-3 max-w-[380px]"
+      >
+        <div className="p-4 ">
+          <label className="flex justify-between">
             Name:
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="ml-4 dark:bg-gray-800"
+              className="ml-4 dark:bg-gray-800 max-w-[190px]"
             />
           </label>
         </div>
-        <div className="p-4">
-          <label>
+        <div className="p-4 ">
+          <label className="flex justify-between">
             Description:
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
-              className="ml-4 dark:bg-gray-800"
+              className="ml-4 dark:bg-gray-800 max-w-[190px]"
             />
           </label>
         </div>
-        <div className="p-4">
-          <label>
+        <div className="p-4 ">
+          <label className="flex justify-between">
             Category:
             <select
               onChange={(e) => setCategory(e.target.value as ProductCategory)}
               value={category}
               required
-              className="ml-4 dark:bg-gray-800"
+              className="ml-4 dark:bg-gray-800 max-w-[190px]"
             >
               <option value="">Select a category</option>
               <option value="electronic_devices">Electronics</option>
@@ -98,8 +104,8 @@ const AddProductPage = () => {
             </select>
           </label>
         </div>
-        <div className="p-4">
-          <label>
+        <div className="p-4 ">
+          <label className="flex justify-between">
             Stock:
             <input
               type="number"
@@ -107,12 +113,12 @@ const AddProductPage = () => {
               value={stock}
               onChange={(e) => setStock(e.target.value)}
               required
-              className="ml-4 dark:bg-gray-800"
+              className="ml-4 dark:bg-gray-800 max-w-[190px]"
             />
           </label>
         </div>
-        <div className="p-4">
-          <label>
+        <div className="p-4 ">
+          <label className="flex justify-between">
             Price:
             <input
               type="number"
@@ -120,17 +126,33 @@ const AddProductPage = () => {
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               required
-              className="ml-4 dark:bg-gray-800"
+              className="ml-4 dark:bg-gray-800 max-w-[190px]"
             />
           </label>
         </div>
-        <div className="flex justify-center">
+        <div className="flex flex-col gap-6 ml-16">
           <button
             type="submit"
             className="text-2xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text w-fit border-2 border-emerald-400 rounded-lg p-4 hover:scale-110 transition-transform hover:-rotate-12"
           >
             Add Product
           </button>
+          <Link href="/products">
+            <button
+              type="submit"
+              className="text-2xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text w-fit border-2 border-emerald-400 rounded-lg p-4 hover:scale-110 transition-transform hover:rotate-12"
+            >
+              Back to Products
+            </button>
+          </Link>
+          <Link href="/">
+            <button
+              type="submit"
+              className="text-2xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text w-fit border-2 border-emerald-400 rounded-lg p-4 hover:scale-110 transition-transform hover:-rotate-12"
+            >
+              Back to Home
+            </button>
+          </Link>
         </div>
       </form>
     </div>

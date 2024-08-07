@@ -52,7 +52,7 @@ export default function Home() {
               </span>
             </h2>
             <p className="m-0 max-w-[30ch] text-sm opacity-50">
-              AAAAAAAAAAAAAA
+              View, Add, Edit, and Delete products.
             </p>
           </div>
         </Link>

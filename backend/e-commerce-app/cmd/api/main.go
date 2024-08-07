@@ -12,11 +12,12 @@ func main() {
 	server, db := server.NewServer()
 
 	// Perform a Heath check with the DB
-	fmt.Println("Performing database health check...")
+	fmt.Printf("Performing database health check...\n\n")
 	healthCheck := db.Health()
 	fmt.Println("PostgreSQL DB - State:", healthCheck["message"])
 
-	fmt.Println("Starting the server...")
+	fmt.Printf("\n Starting the server... \n")
+	fmt.Printf("(If no errors are thrown, server runs correctly) \n")
 	err := server.ListenAndServe()
 	if err != nil {
 		panic(fmt.Sprintf("cannot start server: %s", err))

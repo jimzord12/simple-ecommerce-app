@@ -20,7 +20,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// Auth
 	r.Post("/api/login", LoginHandler)
-	r.Post("/api/register", RegisterHandler)
+	r.Post("/api/register", CreateCustomer)
 
 	// Product Routes
 	r.Get("/api/products", GetProducts)
@@ -78,7 +78,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	err := db.QueryRow("SELECT password FROM customers WHERE email = $1", c.Email).Scan(&dbPassword)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+			http.Error(w, "auth_error: Invalid email or password", http.StatusUnauthorized)
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -87,7 +87,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Handling Wrong Password
 	if c.Password != dbPassword {
-		http.Error(w, "auth_error: wrong password (401)", http.StatusUnauthorized)
+		http.Error(w, "auth_error: wrong password", http.StatusUnauthorized)
 		return
 	}
 
@@ -98,25 +98,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}{
 		Success: true,
 	})
-}
-
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	var c Customer
-	if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	err := db.QueryRow(
-		"INSERT INTO customers (email, password, created_at) VALUES ($1, $2, CURRENT_TIMESTAMP) RETURNING customer_id",
-		c.Email, c.Password).Scan(&c.ID)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(c)
 }
 
 /// Product Handlers ///

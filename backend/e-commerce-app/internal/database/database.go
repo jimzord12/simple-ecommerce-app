@@ -32,22 +32,22 @@ type service struct {
 }
 
 var (
-	database   = os.Getenv("DB_DATABASE")
-	password   = os.Getenv("DB_PASSWORD")
-	username   = os.Getenv("DB_USERNAME")
-	port       = os.Getenv("DB_PORT")
-	host       = os.Getenv("DB_HOST")
-	schema     = os.Getenv("DB_SCHEMA")
+	database = os.Getenv("DB_DATABASE")
+	password = os.Getenv("DB_PASSWORD")
+	username = os.Getenv("DB_USERNAME")
+	port     = os.Getenv("DB_PORT")
+	host     = os.Getenv("DB_HOST")
+	// schema     = os.Getenv("DB_SCHEMA")
 	dbInstance *service
 )
 
 func New() Service {
-	fmt.Println("Database Name:", database)
-	fmt.Println("host:", host)
-	fmt.Println("port:", port)
-	fmt.Println("username:", username)
-	fmt.Println("password:", password)
-	fmt.Println("SCHEMA:", schema)
+	fmt.Println(" * database name:", database)
+	fmt.Println(" * host:", host)
+	fmt.Println(" * port:", port)
+	fmt.Println(" * username:", username)
+	fmt.Println(" * password:", password)
+	// fmt.Println(" * schema:", schema)
 
 	// Reuse Connection
 	if dbInstance != nil {
