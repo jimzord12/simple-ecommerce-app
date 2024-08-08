@@ -20,8 +20,9 @@ export default function RootLayout({
     // Check the user's system preference and add the dark class to make the site dark
     // or remove it to make it light
     if (
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
+      // window.matchMedia &&
+      // window.matchMedia("(prefers-color-scheme: dark)").matches
+      true
     ) {
       document.documentElement.classList.add("dark");
     } else {

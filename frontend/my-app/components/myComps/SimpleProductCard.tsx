@@ -33,7 +33,7 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product }) => {
         <p>Price ${product.price}</p>
       </div>
       <div className="flex gap-4 justify-end w-[30%]">
-        <Link href={`/products/edit/${product.product_id}`}>
+        <Link href={`/products/edit?id=${product.product_id}`}>
           <Button variant="outline" size="icon">
             <MdEditSquare color="white" size={24} />
           </Button>

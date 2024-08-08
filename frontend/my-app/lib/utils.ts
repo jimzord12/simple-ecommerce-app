@@ -7,6 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const apiFetch = async (url: string, options: RequestInit = {}) => {
   try {
+    console.log("ApiFetch: ", `${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`);
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`, {
       ...options,
       headers: {
