@@ -32,15 +32,20 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product }) => {
         <p>Desc: {product.description}</p>
         <p>Price ${product.price}</p>
       </div>
-      <div className="flex gap-4 justify-end w-[30%]">
-        <Link href={`/products/edit?id=${product.product_id}`}>
-          <Button variant="outline" size="icon">
-            <MdEditSquare color="white" size={24} />
-          </Button>
-        </Link>
-        <Button variant="outline" size="icon" onClick={handleProductDelete}>
-          <MdDeleteForever color="white" size={32} />
+      <div className="flex flex-col w-[30%] gap-4">
+        <Button variant="default" size="lg">
+          Add Cart
         </Button>
+        <div className="flex gap-4 justify-between ">
+          <Link href={`/products/edit?id=${product.product_id}`}>
+            <Button variant="outline" size="icon">
+              <MdEditSquare color="white" size={24} />
+            </Button>
+          </Link>
+          <Button variant="outline" size="icon" onClick={handleProductDelete}>
+            <MdDeleteForever color="white" size={32} />
+          </Button>
+        </div>
       </div>
     </div>
   );

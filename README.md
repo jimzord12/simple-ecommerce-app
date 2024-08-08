@@ -36,7 +36,7 @@ Once you downloaded and installed everything...
 git clone https://github.com/jimzord12/simple-ecommerce-app.git
 ```
 
-Now you can read the Frontend and Backend READMEs to proceed.
+Now you can read the **Frontend** and **Backend** READMEs to proceed.
 
 ## Frontend
 

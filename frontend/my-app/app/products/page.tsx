@@ -34,15 +34,17 @@ const ProductsPage = () => {
   }
 
   return (
-    <div className="p-2">
-      <h1 className=" text-4xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text font-bold">
-        Products
-      </h1>
-      <Link href="/products/add">
-        <Button variant="outline" size="lg" className="absolute top-4 right-4">
-          Add Product
-        </Button>
-      </Link>
+    <div className="p-4">
+      <div className="flex justify-between gap-4 min-w-[25%] max-w-[416px]">
+        <h1 className=" text-4xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text font-bold">
+          Products
+        </h1>
+        <Link href="/products/add">
+          <Button variant="outline" size="lg" className="">
+            Add Product
+          </Button>
+        </Link>
+      </div>
       {products.map((product) => {
         return (
           <div key={product.product_id} className="ml-4">
