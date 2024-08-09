@@ -76,7 +76,7 @@ const SignUpForm = ({}) => {
 
     const data = await response.json();
 
-    if (response.ok && data.success) {
+    if (response.ok) {
       console.log("Login Success");
       setIsSuccess(true);
       router.push("/products");
@@ -86,7 +86,9 @@ const SignUpForm = ({}) => {
   return (
     <>
       {error && <div className="text-red-500">{error}</div>}
-      {isSuccess && <div className="text-emerald-500">{error}</div>}
+      {isSuccess && (
+        <div className="text-emerald-500">Successful Registration</div>
+      )}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(myHandleSumbit)}
@@ -184,9 +186,19 @@ const SignUpForm = ({}) => {
             }}
           />
 
-          <Button className="mt-2 w-1/2" type="submit">
-            Register Now
-          </Button>
+          <div className="flex gap-6">
+            <Button className="mt-2 w-1/2" type="submit">
+              Register Now
+            </Button>
+            <Button
+              className="mt-2 w-1/2"
+              variant="secondary"
+              type="button"
+              onClick={() => router.push("/login")}
+            >
+              Login
+            </Button>
+          </div>
         </form>
       </Form>
     </>

@@ -43,7 +43,7 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product }) => {
             </Button>
           </Link>
           <Button variant="outline" size="icon" onClick={handleProductDelete}>
-            <MdDeleteForever color="white" size={32} />
+            <MdDeleteForever color="red" size={32} />
           </Button>
         </div>
       </div>

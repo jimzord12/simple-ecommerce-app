@@ -19,13 +19,19 @@ export async function POST(request: Request) {
     return NextResponse.json(success);
   } catch (error) {
     console.log("Type of Error: ", typeof error);
-    console.log(error.message);
+    console.log((error as { message: string }).message);
     console.log(
       "AAAA: ",
-      (error.message as string).includes("Invalid email or password")
+      (error as { message: string }).message.includes(
+        "Invalid email or password"
+      )
     );
     console.log("RouteError: ", error);
-    if ((error.message as string).includes("Invalid email or password")) {
+    if (
+      (error as { message: string }).message.includes(
+        "Invalid email or password"
+      )
+    ) {
       return NextResponse.json(
         { error: { message: "Invalid email or password" } },
         { status: 401 }

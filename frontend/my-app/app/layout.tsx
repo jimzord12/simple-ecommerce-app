@@ -5,6 +5,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { useEffect } from "react";
 const inter = Inter({ subsets: ["latin"] });
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
@@ -16,6 +19,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [user, setUser, removeUser] = useLocalStorage<{
+    id: number;
+    email: string;
+    exp: number;
+  }>("auth", {
+    id: -1,
+    email: "",
+    exp: -1,
+  });
+
   useEffect(() => {
     // Check the user's system preference and add the dark class to make the site dark
     // or remove it to make it light
@@ -32,7 +45,12 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <>
+          {children}
+          <ToastContainer />
+        </>
+      </body>
     </html>
   );
 }

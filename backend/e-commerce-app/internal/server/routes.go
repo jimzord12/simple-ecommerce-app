@@ -75,7 +75,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Getting users password using their email
 	var dbPassword string
-	err := db.QueryRow("SELECT password FROM customers WHERE email = $1", c.Email).Scan(&dbPassword)
+	err := db.QueryRow("SELECT password, customer_id FROM customers WHERE email = $1", c.Email).Scan(&dbPassword, &c.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "auth_error: Invalid email or password", http.StatusUnauthorized)
@@ -94,9 +94,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Successful authentication
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(struct {
-		Success bool `json:"success"`
+		Success    bool   `json:"success"`
+		CustomerID int    `json:"customer_id"`
+		Email      string `json:"email"`
 	}{
-		Success: true,
+		Success:    true,
+		CustomerID: c.ID,
+		Email:      c.Email,
 	})
 }
 

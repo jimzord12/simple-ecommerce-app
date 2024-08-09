@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Product, ProductCategory } from "../../../types/db_custom_types";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 const EditProductPage = () => {
@@ -74,114 +74,116 @@ const EditProductPage = () => {
   };
 
   return (
-    <div className="p-2">
-      <h1 className=" text-4xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text font-bold">
-        Updating Product: {product?.product_name}
-      </h1>
-      {error && <div style={{ color: "red" }}>Error: {error}</div>}
-      {success && (
-        <div style={{ color: "green", fontWeight: "bold" }}>
-          Product updated successfully!
-        </div>
-      )}
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-3 max-w-[380px]"
-      >
-        <div className="p-4 ">
-          <label className="flex justify-between">
-            Name:
-            <input
-              type="text"
-              value={name || "error"}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="ml-4 dark:bg-gray-800 max-w-[190px]"
-            />
-          </label>
-        </div>
-        <div className="p-4 ">
-          <label className="flex justify-between">
-            Description:
-            <textarea
-              value={description || "error"}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-              className="ml-4 dark:bg-gray-800 max-w-[190px]"
-            />
-          </label>
-        </div>
-        <div className="p-4 ">
-          <label className="flex justify-between">
-            Category:
-            <select
-              onChange={(e) => setCategory(e.target.value as ProductCategory)}
-              value={category || ""}
-              required
-              className="ml-4 dark:bg-gray-800 max-w-[190px]"
-            >
-              <option value="">Select a category</option>
-              <option value="electronic_devices">Electronics</option>
-              <option value="clothing">Clothing</option>
-              <option value="houseware">Homeware</option>
-              <option value="sports">Sports</option>
-              <option value="books">Books</option>
-              <option value="toys">Toys</option>
-            </select>
-          </label>
-        </div>
-        <div className="p-4 ">
-          <label className="flex justify-between">
-            Stock:
-            <input
-              type="number"
-              step="1"
-              value={stock}
-              onChange={(e) => setStock(e.target.value)}
-              required
-              className="ml-4 dark:bg-gray-800 max-w-[190px]"
-            />
-          </label>
-        </div>
-        <div className="p-4 ">
-          <label className="flex justify-between">
-            Price:
-            <input
-              type="number"
-              step="0.01"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              required
-              className="ml-4 dark:bg-gray-800 max-w-[190px]"
-            />
-          </label>
-        </div>
-        <div className="flex flex-col gap-6 ml-16">
-          <button
-            type="submit"
-            className="text-2xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text w-fit border-2 border-emerald-400 rounded-lg p-4 hover:scale-110 transition-transform hover:-rotate-12"
-          >
-            Update Product
-          </button>
-          <Link href="/products">
-            <button
-              type="submit"
-              className="text-2xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text w-fit border-2 border-emerald-400 rounded-lg p-4 hover:scale-110 transition-transform hover:rotate-12"
-            >
-              Back to Products
-            </button>
-          </Link>
-          <Link href="/">
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="p-2">
+        <h1 className=" text-4xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text font-bold">
+          Updating Product: {product?.product_name}
+        </h1>
+        {error && <div style={{ color: "red" }}>Error: {error}</div>}
+        {success && (
+          <div style={{ color: "green", fontWeight: "bold" }}>
+            Product updated successfully!
+          </div>
+        )}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-3 max-w-[380px]"
+        >
+          <div className="p-4 ">
+            <label className="flex justify-between">
+              Name:
+              <input
+                type="text"
+                value={name || "error"}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="ml-4 dark:bg-gray-800 max-w-[190px]"
+              />
+            </label>
+          </div>
+          <div className="p-4 ">
+            <label className="flex justify-between">
+              Description:
+              <textarea
+                value={description || "error"}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                className="ml-4 dark:bg-gray-800 max-w-[190px]"
+              />
+            </label>
+          </div>
+          <div className="p-4 ">
+            <label className="flex justify-between">
+              Category:
+              <select
+                onChange={(e) => setCategory(e.target.value as ProductCategory)}
+                value={category || ""}
+                required
+                className="ml-4 dark:bg-gray-800 max-w-[190px]"
+              >
+                <option value="">Select a category</option>
+                <option value="electronic_devices">Electronics</option>
+                <option value="clothing">Clothing</option>
+                <option value="houseware">Homeware</option>
+                <option value="sports">Sports</option>
+                <option value="books">Books</option>
+                <option value="toys">Toys</option>
+              </select>
+            </label>
+          </div>
+          <div className="p-4 ">
+            <label className="flex justify-between">
+              Stock:
+              <input
+                type="number"
+                step="1"
+                value={stock}
+                onChange={(e) => setStock(e.target.value)}
+                required
+                className="ml-4 dark:bg-gray-800 max-w-[190px]"
+              />
+            </label>
+          </div>
+          <div className="p-4 ">
+            <label className="flex justify-between">
+              Price:
+              <input
+                type="number"
+                step="0.01"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+                className="ml-4 dark:bg-gray-800 max-w-[190px]"
+              />
+            </label>
+          </div>
+          <div className="flex flex-col gap-6 ml-16">
             <button
               type="submit"
               className="text-2xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text w-fit border-2 border-emerald-400 rounded-lg p-4 hover:scale-110 transition-transform hover:-rotate-12"
             >
-              Back to Home
+              Update Product
             </button>
-          </Link>
-        </div>
-      </form>
-    </div>
+            <Link href="/products">
+              <button
+                type="submit"
+                className="text-2xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text w-fit border-2 border-emerald-400 rounded-lg p-4 hover:scale-110 transition-transform hover:rotate-12"
+              >
+                Back to Products
+              </button>
+            </Link>
+            <Link href="/">
+              <button
+                type="submit"
+                className="text-2xl bg-gradient-to-r from-amber-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text w-fit border-2 border-emerald-400 rounded-lg p-4 hover:scale-110 transition-transform hover:-rotate-12"
+              >
+                Back to Home
+              </button>
+            </Link>
+          </div>
+        </form>
+      </div>
+    </Suspense>
   );
 };
 

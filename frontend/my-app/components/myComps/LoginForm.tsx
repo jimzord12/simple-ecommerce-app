@@ -15,6 +15,8 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { showToast } from "@/lib/showToast";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 type LoginFormProps = {};
 
@@ -31,6 +33,16 @@ const LoginForm = ({}) => {
       email: "example@company.com",
       password: "",
     },
+  });
+
+  const [user, setUser, removeUser] = useLocalStorage<{
+    id: number;
+    email: string;
+    exp: number;
+  }>("auth", {
+    id: -1,
+    email: "",
+    exp: -1,
   });
 
   const [error, setError] = useState("");
@@ -51,7 +63,6 @@ const LoginForm = ({}) => {
     });
 
     const data = await response.json();
-    console.log("Error", data);
 
     if (data?.success == undefined) {
       console.log("Login Failed", data.error);
@@ -60,15 +71,27 @@ const LoginForm = ({}) => {
 
     if (response.ok && data.success) {
       console.log("Login Success");
+      console.log("The Received Data: ", data);
+      setUser({
+        id: data.id,
+        email: data.email,
+        exp: Date.now() + 1000 * 60 * 15,
+      });
       setIsSuccess(true);
-      router.push("/products");
+      showToast("success", "Welcome Back", {
+        autoClose: 4 * 1000,
+        hideProgressBar: false,
+      });
+      router.back();
     }
   };
 
   return (
     <>
       {error && <div className="text-red-500">{error}</div>}
-      {isSuccess && <div className="text-emerald-500">{error}</div>}
+      {isSuccess && (
+        <div className="text-emerald-500">Successful Registration</div>
+      )}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(myHandleSumbit)}
@@ -106,9 +129,19 @@ const LoginForm = ({}) => {
             }}
           />
 
-          <Button className="mt-2 w-1/2" type="submit">
-            {isSuccess ? "Welcome Back" : "Login"}
-          </Button>
+          <div className="flex gap-6">
+            <Button className="mt-2 w-1/2" type="submit">
+              {isSuccess ? "Welcome Back" : "Login"}
+            </Button>
+            <Button
+              className="mt-2 w-1/2"
+              variant="secondary"
+              type="button"
+              onClick={() => router.push("/signup")}
+            >
+              Register
+            </Button>
+          </div>
         </form>
       </Form>
     </>
