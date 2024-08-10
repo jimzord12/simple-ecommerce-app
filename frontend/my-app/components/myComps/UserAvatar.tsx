@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { FaUserCircle } from "react-icons/fa";
 
@@ -13,8 +14,20 @@ const UserAvatar = () => {
     email: "",
     exp: -1,
   });
+
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true); // Mark that the component has been hydrated
+  }, []);
+
+  if (!isHydrated) {
+    // Optionally, return null or a loading state until hydration is complete
+    return null;
+  }
+
   return (
-    <div className="flex gap-4 items-center p-4 border-2 rounded-xl">
+    <div className="flex items-center gap-4 rounded-xl border-2 p-4">
       <FaUserCircle color="white" size={32} />
       <p className="text-2xl">{user.email}</p>
     </div>

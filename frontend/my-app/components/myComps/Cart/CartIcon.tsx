@@ -6,9 +6,10 @@ import { Product } from "@/types/db_custom_types";
 import CartDrawer from "./CartDrawer";
 import { useState } from "react";
 import { open } from "fs";
+import { CartItemType } from "@/types/types";
 
 interface CartProps {
-  products: Product[];
+  products: CartItemType[];
 }
 
 const CartIcon = ({ products }: CartProps) => {
@@ -16,8 +17,8 @@ const CartIcon = ({ products }: CartProps) => {
 
   return (
     <>
-      <div className="relative flex gap-4 items-center border-2 rounded-xl hover:bg-foreground hover:text-background">
-        <div className="w-full h-full p-4 hover:font-background">
+      <div className="relative flex items-center gap-4 rounded-xl border-2 hover:bg-foreground hover:text-background">
+        <div className="hover:font-background h-full w-full p-4">
           <FaCartShopping
             // color="white"
             // className="hover:text-background"
@@ -25,7 +26,7 @@ const CartIcon = ({ products }: CartProps) => {
           />
         </div>
         {productCount > 0 && (
-          <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+          <span className="absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
             {productCount}
           </span>
         )}

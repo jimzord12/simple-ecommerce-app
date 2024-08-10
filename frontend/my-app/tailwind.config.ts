@@ -14,7 +14,7 @@ const config = {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        "2xl": "1200px",
       },
     },
     extend: {
@@ -58,6 +58,9 @@ const config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        blurry: "0 8px 32px rgba(0, 0, 0, 1)", // Custom blurry box-shadow
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -74,7 +77,7 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), "prettier-plugin-tailwindcss"],
+  plugins: [require("tailwindcss-animate")],
 } satisfies Config;
 
 export default config;
