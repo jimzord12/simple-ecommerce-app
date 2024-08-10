@@ -82,7 +82,7 @@ const LoginForm = ({}) => {
         autoClose: 4 * 1000,
         hideProgressBar: false,
       });
-      router.back();
+      router.replace("/");
     }
   };
 

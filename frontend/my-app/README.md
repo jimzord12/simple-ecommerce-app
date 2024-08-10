@@ -1,4 +1,16 @@
+## Some Pics 📷
+
+<img src="../../readmeImgs/nextjs-home-page.png" >
+<img src="../../readmeImgs/nextjs-register.png" >
+<img src="../../readmeImgs/nextjs-products.png" >
+<img src="../../readmeImgs/nextjs-cart.png" >
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+## Requirements
+
+- The installation of a modern version of [Node.js](https://nodejs.org/en)
+- (Recommended) The use of **pnpm** instead of **npm**. To download it, [go here](https://pnpm.io/installation)
 
 ## Getting Started
 
@@ -7,18 +19,11 @@ First, run the development server:
 ```bash
 npm run dev
 # or
-yarn dev
-# or
 pnpm dev (recommended)
 # or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## ⚠ Important - Uncomment `.env.local` at `.gitignore`
 
@@ -28,17 +33,25 @@ However, you should NOT! Therefore, find a file named `.gitignore` in `frontend/
 
 Go to **line 29** and uncomment it.
 
-## Learn More
+## Purpose
 
-To learn more about Next.js, take a look at the following resources:
+To create a simple, yet completely functional Frontend using Next.js 14.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Using all new features and applying best practises was not the project's main objective.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## What's worth exploring
 
-## Deploy on Vercel
+1. How to use some complex components of the popular `shadcn/ui` UI Component Library.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   - **Form**: Create and Validate afForm using `zod` + `react-hook-form` libraries
+   - **Drawer**: Create a dynaminc (opening/closing) Cart sidebar using the `Drawer` component
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+2. In Next.js 14, how to create/use:
+
+   - Context Providers
+   - App Router (to create web pages)
+   - API Route Handlers
+
+3. Uncommon Tailwindcss styling
+
+   - For instance, in the Home Page I used: `peer/auth` and `peer-hover/auth` to change the behavior of one element based on the state of another. Additionally, I also used `order-x` to overcome a restriction that `peer/xxxx` has.
