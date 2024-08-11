@@ -73,7 +73,7 @@ const LoginForm = ({}) => {
       console.log("Login Success");
       console.log("The Received Data: ", data);
       setUser({
-        id: data.id,
+        id: data.customer_id,
         email: data.email,
         exp: Date.now() + 1000 * 60 * 15,
       });
@@ -89,9 +89,7 @@ const LoginForm = ({}) => {
   return (
     <>
       {error && <div className="text-red-500">{error}</div>}
-      {isSuccess && (
-        <div className="text-emerald-500">Successful Registration</div>
-      )}
+      {isSuccess && <div className="text-emerald-500">Successful Login In</div>}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(myHandleSumbit)}

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { apiFetch } from "../../../../lib/utils";
 
+// CUSTOMERS
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -16,9 +17,10 @@ export async function POST(request: Request) {
     // Extract the response data
     return NextResponse.json(customer);
   } catch (error) {
-    console.log("RouteError: ", error);
-    return NextResponse.json({ error }, { status: 500 });
+    const myError = error as Error;
+    console.log("RouteError: ", myError);
+    return NextResponse.json({ error: myError.message }, { status: 500 });
   }
 }
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";

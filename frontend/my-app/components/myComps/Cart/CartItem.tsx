@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
 import { CartItemType } from "@/types/types";
+import StockContext from "@/context/StockContext";
+import { showToast } from "@/lib/showToast";
 
 interface CartItemProps {
   cartItem: CartItemType;
@@ -13,19 +15,19 @@ const CartItem = ({
   increaseQuantity,
   decreaseQuantity,
 }: CartItemProps) => {
-  const [quantity, setQuantity] = useState(cartItem.quantity || 1);
+  const stockContext = useContext(StockContext);
 
-  // const increaseQuantity = () => {
-  //   setQuantity((prev) => prev + 1);
-  // };
+  if (!stockContext) {
+    throw new Error(
+      "ProductsPage must be used within a StockContextProvider and CartContextProvider",
+    );
+  }
 
-  // const decreaseQuantity = () => {
-  //   if (quantity > 1) {
-  //     setQuantity((prev) => prev - 1);
-  //   } else {
-  //     onRemove(cartItem);
-  //   }
-  // };
+  const { increaseStockBy, decreaseStockBy } = stockContext;
+
+  // const prodIndex = products.findIndex((p) => p.product_id === cartItem.id);
+
+  // const product = products[prodIndex];
 
   return (
     <div className="flex items-center justify-between border-b p-4">
@@ -39,14 +41,31 @@ const CartItem = ({
       </div>
       <div className="flex min-w-24 items-center gap-2">
         <button
-          onClick={() => decreaseQuantity(cartItem.id, 1)}
+          onClick={() => {
+            try {
+              decreaseQuantity(cartItem.id, 1);
+              increaseStockBy(cartItem.id, 1);
+            } catch (error) {
+              increaseQuantity(cartItem.id, 1);
+              console.error(error);
+            }
+          }}
           className="rounded-full bg-gray-200 p-1 text-slate-900 hover:bg-gray-300"
         >
           {cartItem.quantity === 1 ? <FaTrash color="red" /> : <FaMinus />}
         </button>
         <span className="w-12 px-4 text-center">{cartItem.quantity}</span>
         <button
-          onClick={() => increaseQuantity(cartItem.id, 1)}
+          onClick={() => {
+            try {
+              increaseQuantity(cartItem.id, 1);
+              decreaseStockBy(cartItem.id, 1);
+            } catch (error) {
+              console.error(error);
+              showToast("error", "Not enough stock");
+              decreaseQuantity(cartItem.id, 1);
+            }
+          }}
           className="rounded-full bg-gray-200 p-1 text-slate-900 hover:bg-gray-300"
         >
           <FaPlus />

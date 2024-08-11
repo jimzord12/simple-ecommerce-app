@@ -3,12 +3,14 @@ import { apiFetch } from "../../../../../lib/utils";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     console.log("GET Route Request ID: ", params.id);
 
-    const products = await apiFetch(`/products/${params.id}`);
+    const products = await apiFetch(`/products/${params.id}`, {
+      cache: "no-store",
+    });
     return NextResponse.json(products);
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
@@ -17,7 +19,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // Extract the ID from the request parameters

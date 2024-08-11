@@ -1,21 +1,27 @@
+// app/api/products/route.ts
 import { NextResponse } from "next/server";
-import { apiFetch } from "../../../../../lib/utils";
+import { apiFetch } from "../../../../lib/utils";
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } },
 ) {
-  try {
-    console.log("GET Route Request ID: ", params.id);
+  // Extract the ID from the request parameters
+  const { id } = params;
+  console.log("Order ID: ", id);
 
-    const customer = await apiFetch(`/customers/${params.id}`);
-    return NextResponse.json(customer);
+  try {
+    const order = await apiFetch("/orders/" + id, {
+      cache: "no-store",
+    });
+    return NextResponse.json(order);
   } catch (error) {
+    console.log("Error fetching order:", error);
     return NextResponse.json({ error }, { status: 500 });
   }
 }
 
-export async function PUT(
+export async function DELETE(
   request: Request,
   { params }: { params: { id: string } },
 ) {
@@ -23,18 +29,14 @@ export async function PUT(
     // Extract the ID from the request parameters
     const { id } = params;
 
-    console.log("PUT Route Request ID: ", id);
+    console.log("Delete Route Request ID: ", id);
 
-    const resBody = await request.json();
-
-    const updatedCustomer = await apiFetch(`/customers/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(resBody),
-      cache: "no-store",
+    await apiFetch(`/orders/${id}`, {
+      method: "DELETE",
     });
 
     // Extract the response data
-    return new NextResponse(updatedCustomer, { status: 200 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     const myError = error as Error;
     console.log("DELETE RouteError: ", error);
@@ -42,4 +44,4 @@ export async function PUT(
   }
 }
 
-export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";

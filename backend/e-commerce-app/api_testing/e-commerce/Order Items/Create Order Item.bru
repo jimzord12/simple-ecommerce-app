@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/api/orders/1/items
+  url: http://localhost:8080/api/orders/2/items
   body: json
   auth: none
 }
@@ -16,8 +16,7 @@ headers {
 
 body:json {
   {
-    "order_id": 3,
-    "product_id": 3,
-    "quantity": 26
+    "product_id": 2,
+    "quantity": 3
   }
 }

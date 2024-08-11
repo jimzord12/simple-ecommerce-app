@@ -20,6 +20,7 @@ interface Product {
   description: string;
   price: number;
   stock_quantity: number;
+  isStockSufficient?: boolean;
 }
 
 interface Order {
@@ -27,6 +28,7 @@ interface Order {
   customer_id: number;
   order_date: string;
   status: OrderStatus;
+  items: OrderItem[];
 }
 
 interface OrderItem {

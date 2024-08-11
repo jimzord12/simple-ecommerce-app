@@ -4,8 +4,8 @@ import { apiFetch } from "../../../lib/utils";
 
 export async function GET() {
   try {
-    const products = await apiFetch("/customers");
-    return NextResponse.json(products);
+    const orders = await apiFetch("/orders");
+    return NextResponse.json(orders);
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }

@@ -11,12 +11,25 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/jimzord12/simple-ecommerce-app/backend/e-commerce-app/internal/database"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+
+	// Set up CORS middleware to allow requests from "localhost:3000"
+	corsOptions := cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000", "localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           1000, // Maximum value not ignored by any of major browsers
+	}
+
+	r.Use(cors.Handler(corsOptions))
 
 	// Auth
 	r.Post("/api/login", LoginHandler)
@@ -284,8 +297,8 @@ func UpdateCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 	c.ID, _ = strconv.Atoi(id)
 
-	_, err := db.Exec("UPDATE customers SET first_name=$1, last_name=$2, email=$3, password=$4 WHERE customer_id=$5",
-		c.FirstName, c.LastName, c.Email, c.Password, c.ID)
+	_, err := db.Exec("UPDATE customers SET first_name=$1, last_name=$2, email=$3 WHERE customer_id=$4",
+		c.FirstName, c.LastName, c.Email, c.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -326,6 +339,27 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// Fetch the order items associated with the order
+		orderItemRows, err := db.Query("SELECT order_item_id, order_id, product_id, quantity, price FROM order_items WHERE order_id = $1", o.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer orderItemRows.Close() // Close the orderItemRows after using them
+
+		var items []OrderItem
+		for orderItemRows.Next() {
+			var item OrderItem
+			if err := orderItemRows.Scan(&item.ID, &item.OrderID, &item.ProductID, &item.Quantity, &item.Price); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			items = append(items, item)
+		}
+
+		o.Items = items
+
 		orders = append(orders, o)
 	}
 	if err := rows.Err(); err != nil {
@@ -341,6 +375,8 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 func GetOrderByID(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	var o Order
+
+	// Fetch the order details
 	err := db.QueryRow("SELECT order_id, customer_id, order_date, status FROM orders WHERE order_id = $1", id).Scan(&o.ID, &o.CustomerID, &o.OrderDate, &o.Status)
 	if err == sql.ErrNoRows {
 		http.Error(w, "Order not found", http.StatusNotFound)
@@ -350,6 +386,33 @@ func GetOrderByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Fetch the order items associated with the order
+	rows, err := db.Query("SELECT order_item_id, order_id, product_id, quantity, price FROM order_items WHERE order_id = $1", id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var items []OrderItem
+	for rows.Next() {
+		var item OrderItem
+		if err := rows.Scan(&item.ID, &item.OrderID, &item.ProductID, &item.Quantity, &item.Price); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		items = append(items, item)
+	}
+	// Check for errors during the row iteration
+	if err := rows.Err(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Add the items to the order
+	o.Items = items
+
+	// Return the full order details as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(o)
 }

@@ -13,6 +13,7 @@ export interface CartContextType {
   increaseCartItemQuantityBy: (id: number, amount: number) => void;
   addCartItem: (cartItem: CartItemType) => void;
   removeCartItem: (cartItem: CartItemType) => void;
+  getTotalPrice: () => number;
 }
 
 // Create the context with default values (use `null` or initial values)

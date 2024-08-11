@@ -3,7 +3,7 @@ import { apiFetch } from "../../../../../lib/utils";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // Extract the ID from the request parameters
@@ -18,8 +18,9 @@ export async function DELETE(
     // Extract the response data
     return new NextResponse(null, { status: 204 });
   } catch (error) {
+    const myError = error as Error;
     console.log("DELETE RouteError: ", error);
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json({ error: myError.message }, { status: 500 });
   }
 }
 

@@ -19,10 +19,11 @@ type Customer struct {
 }
 
 type Order struct {
-	ID         int    `json:"order_id"`
-	CustomerID int    `json:"customer_id"`
-	OrderDate  string `json:"order_date"`
-	Status     string `json:"status"`
+	ID         int         `json:"order_id"`
+	CustomerID int         `json:"customer_id"`
+	OrderDate  string      `json:"order_date"`
+	Status     string      `json:"status"`
+	Items      []OrderItem `json:"items"`
 }
 
 type OrderItem struct {

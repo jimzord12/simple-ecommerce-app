@@ -14,6 +14,7 @@ import CartItem from "./CartItem";
 import { useContext } from "react";
 import type { CartItemType } from "../../../types/types";
 import CartContext from "@/context/CartContext";
+import Link from "next/link";
 
 const CartDrawer = () => {
   const cartContext = useContext(CartContext);
@@ -76,9 +77,11 @@ const CartDrawer = () => {
             </div>
           </div>
           {cartItems.length > 0 && (
-            <button className="rounded-md bg-blue-600 p-2 text-white hover:bg-blue-700">
-              Checkout
-            </button>
+            <Link href="/checkout">
+              <button className="rounded-md bg-blue-600 p-2 text-white hover:bg-blue-700">
+                Checkout
+              </button>
+            </Link>
           )}
         </DrawerFooter>
       </DrawerContent>

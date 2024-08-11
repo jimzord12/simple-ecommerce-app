@@ -10,6 +10,10 @@ const initialState: CartContextState = [] as CartItemType[];
 const MyProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartContextState>(initialState);
 
+  const getTotalPrice = () => {
+    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  };
+
   const decreaseCartItemQuantityBy = (id: number, amount: number = 1) => {
     setCartItems((prev) => {
       let cartItem = prev.find((item) => item.id === id);
@@ -69,6 +73,7 @@ const MyProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
 
         addCartItem,
         removeCartItem,
+        getTotalPrice,
       }}
     >
       {children}

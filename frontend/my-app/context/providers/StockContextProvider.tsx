@@ -1,7 +1,7 @@
 // context/MyProvider.tsx
 "use client";
 
-import { useState, FC } from "react";
+import { useState, FC, useEffect } from "react";
 import MyContext, { StockContextState } from "../StockContext";
 import { Product } from "../../types/db_custom_types";
 
@@ -9,13 +9,66 @@ import { Product } from "../../types/db_custom_types";
 const initialState: StockContextState = [] as Product[];
 
 const MyProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
+
   const [products, setProducts] = useState<StockContextState>(initialState);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        console.log("Fetching products");
+        const res = await fetch("/api/products");
+        if (!res.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data = await res.json();
+        setProducts(data);
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
 
   const decreaseStockBy = (id: number, amount: number) => {
+    const product = products.find((product) => product.product_id === id);
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    if (product.stock_quantity < amount) {
+      throw new Error("Not enough stock");
+    }
+
     setProducts((prev) => {
       const newProducts = prev.map((product) => {
         if (product.product_id === id) {
-          return { ...product, stock: product.stock_quantity - amount };
+          return {
+            ...product,
+            stock_quantity: product.stock_quantity - amount,
+          };
+        }
+        return product;
+      });
+
+      return newProducts;
+    });
+  };
+
+  const increaseStockBy = (id: number, amount: number) => {
+    setProducts((prev) => {
+      const newProducts = prev.map((product) => {
+        if (product.product_id === id) {
+          return {
+            ...product,
+            stock_quantity: product.stock_quantity + amount,
+          };
         }
         return product;
       });
@@ -46,8 +99,11 @@ const MyProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
         products,
         setProducts,
         decreaseStockBy,
+        increaseStockBy,
         addProduct,
         removeProduct,
+        error,
+        isLoading
       }}
     >
       {children}
