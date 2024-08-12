@@ -1,13 +1,14 @@
 "use client";
 
 import { Customer } from "@/types/db_custom_types";
-import React from "react";
+import React, { useContext } from "react";
 import { Button } from "../../ui/button";
 import { MdEditSquare } from "react-icons/md";
 import { MdDeleteForever } from "react-icons/md";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/lib/showToast";
+import CustomerContext from "@/context/CustomerContext";
 
 type SimpleCustomerCardProps = {
   customer: Customer;
@@ -17,6 +18,23 @@ const SimpleCustomerCard: React.FC<SimpleCustomerCardProps> = ({
   customer,
 }) => {
   const router = useRouter();
+
+  const customerContext = useContext(CustomerContext);
+
+  if (!customerContext) {
+    throw new Error(
+      "CustomersPage must be used within a CustomerContextProvider and CartContextProvider",
+    );
+  }
+
+  const {
+    customers,
+    setCustomers,
+    error,
+    setError,
+    fetchCustomers,
+    isLoading,
+  } = customerContext;
 
   async function handleCustomerDelete() {
     const res = await fetch(`/api/customers/delete/${customer.customer_id}`, {
@@ -29,6 +47,7 @@ const SimpleCustomerCard: React.FC<SimpleCustomerCardProps> = ({
       showToast("success", "Customer deleted successfully");
     }
 
+    fetchCustomers();
     router.refresh();
   }
 

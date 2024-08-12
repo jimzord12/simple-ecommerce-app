@@ -28,7 +28,7 @@ const ProductsPage = () => {
   }
 
   const { products, setProducts, error, isLoading } = stockContext;
-  const { cartItems, setCartItems } = cartContext;
+  // const { cartItems, setCartItems } = cartContext;
 
   // const [error, setError] = useState<string | null>(null);
   // const [isLoading, setIsLoading] = useState(true);

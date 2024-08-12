@@ -32,7 +32,7 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({
   }
 
   const { addCartItem, cartItems, increaseCartItemQuantityBy } = cartContext;
-  const { decreaseStockBy, products } = stockContext;
+  const { decreaseStockBy, products, fetchProducts } = stockContext;
 
   const prodIndex = products.findIndex(
     (p) => p.product_id === productCopy.product_id,
@@ -58,12 +58,13 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({
     });
 
     if (!res.ok) {
-      showToast("error", "Failed to delete customer");
+      showToast("error", "Failed to delete Product");
     } else {
-      showToast("success", "Customer deleted successfully");
+      showToast("success", "Product deleted successfully");
     }
 
     router.refresh();
+    fetchProducts();
   }
 
   return (

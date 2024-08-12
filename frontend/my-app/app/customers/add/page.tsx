@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserAvatar from "@/components/myComps/UserAvatar";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/hooks/useAuth";
@@ -9,17 +9,34 @@ import { showToast } from "@/lib/showToast";
 import { useRouter } from "next/navigation";
 import { error } from "console";
 import { generateRandomPassword } from "@/lib/utils";
+import CustomerContext from "@/context/CustomerContext";
 
 const AddCustomerPage = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
 
   const router = useRouter();
   const { checkAuth } = useAuth();
+
+  const customerContext = useContext(CustomerContext);
+
+  if (!customerContext) {
+    throw new Error(
+      "CustomersPage must be used within a CustomerContextProvider and CartContextProvider",
+    );
+  }
+
+  const {
+    customers,
+    setCustomers,
+    error,
+    setError,
+    fetchCustomers,
+    isLoading,
+  } = customerContext;
 
   useEffect(() => {
     const msg = checkAuth();
@@ -64,6 +81,8 @@ const AddCustomerPage = () => {
       setEmail("");
       setPhone("");
       setSuccess(true);
+
+      fetchCustomers();
     } catch (error: any) {
       setError(error.message);
       setSuccess(false);

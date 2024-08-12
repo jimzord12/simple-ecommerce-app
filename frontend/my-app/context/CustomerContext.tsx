@@ -12,6 +12,10 @@ export interface CustomerContextType {
   addCustomer: (customer: Customer) => void;
   removeCustomer: (customer: Customer) => void;
   updateCustomer: (updatedCustomer: Customer) => void;
+  error: string | null;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+  isLoading: boolean;
+  fetchCustomers: () => void;
 }
 
 // Create the context with default values (use `undefined` initially)

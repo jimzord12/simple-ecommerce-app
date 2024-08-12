@@ -1,14 +1,14 @@
 "use client";
 
 import { Order } from "@/types/db_custom_types";
-import React from "react";
+import React, { useContext } from "react";
 import { Button } from "../../ui/button";
 import { MdEditSquare } from "react-icons/md";
 import { MdDeleteForever } from "react-icons/md";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/lib/showToast";
-import { revalidatePath } from "next/cache";
+import OrdersContext from "@/context/OrderContext";
 
 type SimpleOrderCardProps = {
   order: Order;
@@ -16,6 +16,16 @@ type SimpleOrderCardProps = {
 
 const SimpleOrderCard: React.FC<SimpleOrderCardProps> = ({ order }) => {
   const router = useRouter();
+
+  const orderContext = useContext(OrdersContext);
+
+  if (!orderContext) {
+    throw new Error(
+      "The SimpleOrderCard needs to be wrapped inside a OrderContextProvider",
+    );
+  }
+
+  const { fetchOrders } = orderContext;
 
   async function handleOrderDelete() {
     const res = await fetch(`/api/orders/${order.order_id}`, {
@@ -28,6 +38,7 @@ const SimpleOrderCard: React.FC<SimpleOrderCardProps> = ({ order }) => {
       showToast("success", "Order deleted successfully");
     }
 
+    fetchOrders();
     router.refresh();
     // revalidatePath("/orders");
   }
@@ -36,21 +47,21 @@ const SimpleOrderCard: React.FC<SimpleOrderCardProps> = ({ order }) => {
     <div className="flex min-w-[25%] max-w-[550px] items-center gap-8 rounded-lg bg-zinc-700 bg-opacity-45 p-4">
       <div className="w-[85%]">
         <h2 className="inline-flex w-full items-end justify-between">
-          <span className="inline-flex w-[100px]">Order ID: </span>
+          <span className="inline-flex w-[200px]">Order ID: </span>
           <span className="inline-flex w-fit">{order.order_id}</span>
         </h2>
         <p className="inline-flex w-full items-end justify-between">
-          <span className="inline-flex w-[100px]">Customer ID: </span>
+          <span className="inline-flex w-[200px]">Customer ID: </span>
           <span className="inline-flex w-fit text-end">
             {order.customer_id}
           </span>
         </p>
         <p className="inline-flex w-full items-end justify-between">
-          <span className="inline-flex w-[100px]">Status: </span>
+          <span className="inline-flex w-[200px]">Status: </span>
           <span className="inline-flex w-fit text-end">{order.status}</span>
         </p>
         <p className="inline-flex w-full items-end justify-between">
-          <span className="inline-flex w-[100px]">Order Date: </span>
+          <span className="inline-flex w-[200px]">Order Date: </span>
           <span className="inline-flex w-fit text-end">
             {new Date(order.order_date).toLocaleDateString()}
           </span>

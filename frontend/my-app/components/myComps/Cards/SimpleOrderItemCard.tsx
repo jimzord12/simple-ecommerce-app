@@ -65,7 +65,8 @@ const SimpleOrderItemCard: React.FC<SimpleOrderItemCardProps> = ({
   );
 
   if (productItem === undefined) {
-    showToast("error", "Item not Found");
+    // showToast("error", "Item not Found");
+    console.log("Item not Found");
     return null;
   }
 

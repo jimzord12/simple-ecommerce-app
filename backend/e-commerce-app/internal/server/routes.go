@@ -574,7 +574,7 @@ func CreateOrderItem(w http.ResponseWriter, r *http.Request) {
 
 // Tested with Bruno ✅
 func UpdateOrderItem(w http.ResponseWriter, r *http.Request) {
-	orderID := chi.URLParam(r, "order_id")
+	// orderID := chi.URLParam(r, "order_id")
 	id := chi.URLParam(r, "id")
 	var oi OrderItem
 	if err := json.NewDecoder(r.Body).Decode(&oi); err != nil {
@@ -582,7 +582,7 @@ func UpdateOrderItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	oi.ID, _ = strconv.Atoi(id)
-	oi.OrderID, _ = strconv.Atoi(orderID)
+	// oi.OrderID, _ = strconv.Atoi(orderID)
 
 	// // Getting Product ID using Order Item ID
 	// err := db.QueryRow("SELECT product_id FROM order_items WHERE order_item_id = $1", id).Scan(&oi.ProductID)
@@ -622,9 +622,9 @@ func UpdateOrderItem(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	// Updating Order Item
-	price := float64(oi.Quantity) * p.Price
+	// price := float64(oi.Quantity) * p.Price
 	_, err := db.Exec("UPDATE order_items SET quantity=$1, price=$2 WHERE order_item_id=$3 AND order_id=$4",
-		oi.Quantity, price, oi.ID, oi.OrderID)
+		oi.Quantity, oi.Price, oi.ID, oi.OrderID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

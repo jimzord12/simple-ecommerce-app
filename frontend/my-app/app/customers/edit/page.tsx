@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/myComps/UserAvatar";
 import useAuth from "@/hooks/useAuth";
 import { showToast } from "@/lib/showToast";
 import { useRouter } from "next/navigation";
-import { set } from "zod";
+import CustomerContext from "@/context/CustomerContext";
 
 const EditCustomerPage = () => {
   const params = useSearchParams();
@@ -19,11 +19,27 @@ const EditCustomerPage = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
 
   const router = useRouter();
   const { checkAuth } = useAuth();
+
+  const customerContext = useContext(CustomerContext);
+
+  if (!customerContext) {
+    throw new Error(
+      "CustomersPage must be used within a CustomerContextProvider and CartContextProvider",
+    );
+  }
+
+  const {
+    customers,
+    setCustomers,
+    error,
+    setError,
+    fetchCustomers,
+    isLoading,
+  } = customerContext;
 
   useEffect(() => {
     const msg = checkAuth();
@@ -87,6 +103,7 @@ const EditCustomerPage = () => {
 
       showToast("success", "Customer updated successfully!");
       setSuccess(true);
+      fetchCustomers();
     } catch (error: any) {
       setError(error.message);
       showToast("error", error.message);

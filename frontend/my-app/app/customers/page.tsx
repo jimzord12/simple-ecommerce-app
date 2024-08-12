@@ -8,11 +8,9 @@ import useAuth from "@/hooks/useAuth";
 import { showToast } from "@/lib/showToast";
 import { useRouter } from "next/navigation";
 import UserAvatar from "@/components/myComps/UserAvatar";
-import CartDrawer from "@/components/myComps/Cart/CartDrawer";
-import { mockCartItems } from "../../lib/mock/mockingCartItems";
-import CustomerContext from "@/context/CustomerContext";
 import CartContext from "@/context/CartContext";
 import { Customer } from "@/types/db_custom_types";
+import CustomerContext from "@/context/CustomerContext";
 
 const CustomersPage = () => {
   const { checkAuth } = useAuth();
@@ -21,17 +19,23 @@ const CustomersPage = () => {
   const customerContext = useContext(CustomerContext);
   const cartContext = useContext(CartContext);
 
-  if (!customerContext || !cartContext) {
+  if (!customerContext) {
     throw new Error(
       "CustomersPage must be used within a CustomerContextProvider and CartContextProvider",
     );
   }
 
-  const { customers, setCustomers } = customerContext;
-  const { cartItems, setCartItems } = cartContext;
+  const {
+    customers,
+    setCustomers,
+    error,
+    setError,
+    fetchCustomers,
+    isLoading,
+  } = customerContext;
 
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [error, setError] = useState<string | null>(null);
+  // const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const msg = checkAuth();
@@ -44,33 +48,6 @@ const CustomersPage = () => {
         autoClose: false,
       });
     }
-  }, []);
-
-  useEffect(() => {
-    console.log("Cart Items: ", cartItems);
-    const fetchCustomers = async () => {
-      try {
-        console.log("Fetching customers");
-        const res = await fetch("/api/customers");
-        if (!res.ok) {
-          throw new Error("Failed to fetch customers");
-        }
-        const data = await res.json();
-        console.log("The Customers: ", data);
-        setCustomers(data);
-      } catch (error: any) {
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCustomers();
-  }, []);
-
-  useEffect(() => {
-    console.log("[MOCK] - Cart Items: ", mockCartItems);
-    setCartItems(mockCartItems);
   }, []);
 
   if (error) {

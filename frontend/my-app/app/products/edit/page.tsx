@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { Product, ProductCategory } from "../../../types/db_custom_types";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/myComps/UserAvatar";
 import useAuth from "@/hooks/useAuth";
 import { showToast } from "@/lib/showToast";
 import { useRouter } from "next/navigation";
+import StockContext from "@/context/StockContext";
 
 const EditProductPage = () => {
   const params = useSearchParams();
@@ -26,6 +27,14 @@ const EditProductPage = () => {
   const [success, setSuccess] = useState<boolean>(false);
 
   const { checkAuth } = useAuth();
+
+  const stockContext = useContext(StockContext);
+
+  if (!stockContext) {
+    throw new Error("ProductsPage must be used within a StockContextProvider");
+  }
+
+  const { fetchProducts } = stockContext;
 
   useEffect(() => {
     const msg = checkAuth();
@@ -90,6 +99,7 @@ const EditProductPage = () => {
       }
 
       setSuccess(true);
+      fetchProducts();
     } catch (error: any) {
       setError(error.message);
       setSuccess(false);

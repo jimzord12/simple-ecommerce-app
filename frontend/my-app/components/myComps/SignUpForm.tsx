@@ -21,8 +21,8 @@ type SignUpFormProps = {};
 const formSchema = z
   .object({
     email: z.string().email(),
-    first_name: z.string(),
-    last_name: z.string(),
+    first_name: z.string().min(3),
+    last_name: z.string().min(3),
     password: z.string().min(8),
     passwordConfirm: z.string().optional(),
   })
@@ -79,6 +79,7 @@ const SignUpForm = ({}) => {
     if (response.ok) {
       console.log("Login Success");
       setIsSuccess(true);
+      sessionStorage.setItem("previousUrl", window.location.href);
       router.push("/login");
     }
   };

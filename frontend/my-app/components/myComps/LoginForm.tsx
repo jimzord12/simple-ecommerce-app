@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { showToast } from "@/lib/showToast";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { usePathname } from "next/navigation";
 
 type LoginFormProps = {};
 
@@ -27,6 +28,7 @@ const formSchema = z.object({
 
 const LoginForm = ({}) => {
   const router = useRouter();
+  const pathname = usePathname();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,6 +49,8 @@ const LoginForm = ({}) => {
 
   const [error, setError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+
+  console.log("The Pathname: ", pathname);
 
   const myHandleSumbit = async (values: z.infer<typeof formSchema>) => {
     if (error) {
@@ -82,7 +86,15 @@ const LoginForm = ({}) => {
         autoClose: 4 * 1000,
         hideProgressBar: false,
       });
-      router.replace("/");
+
+      const url: string | null = sessionStorage.getItem("previousUrl");
+      if (url == null) {
+        router.push("/");
+      } else if (url.includes("/signup")) {
+        router.replace("/");
+      } else {
+        router.back();
+      }
     }
   };
 

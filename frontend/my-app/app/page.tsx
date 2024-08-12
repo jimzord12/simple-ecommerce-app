@@ -48,7 +48,7 @@ export default function Home() {
                   Login
                 </Button>
               </Link>
-              <Link href="/register">
+              <Link href="/signup">
                 <Button className="p-4 text-xl" variant="secondary" size="lg">
                   Sign Up
                 </Button>

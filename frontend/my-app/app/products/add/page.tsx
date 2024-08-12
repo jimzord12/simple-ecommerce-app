@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { ProductCategory } from "../../../types/db_custom_types";
-import { useEffect, useState } from "react";
-import CartDrawer from "@/components/myComps/Cart/CartDrawer";
+import { useContext, useEffect, useState } from "react";
 import UserAvatar from "@/components/myComps/UserAvatar";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/hooks/useAuth";
 import { showToast } from "@/lib/showToast";
 import { useRouter } from "next/navigation";
+import StockContext from "@/context/StockContext";
 
 const AddProductPage = () => {
   const [name, setName] = useState("");
@@ -21,6 +21,14 @@ const AddProductPage = () => {
 
   const router = useRouter();
   const { checkAuth } = useAuth();
+
+  const stockContext = useContext(StockContext);
+
+  if (!stockContext) {
+    throw new Error("ProductsPage must be used within a StockContextProvider");
+  }
+
+  const { fetchProducts } = stockContext;
 
   useEffect(() => {
     const msg = checkAuth();
@@ -65,6 +73,7 @@ const AddProductPage = () => {
       setStock("");
       setPrice("");
       setSuccess(true);
+      fetchProducts();
     } catch (error: any) {
       setError(error.message);
       setSuccess(false);
