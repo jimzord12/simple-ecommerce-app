@@ -20,9 +20,11 @@ export interface OrdersContextType {
     itemId: number,
     amount: number,
     product: Product,
+    counter: number,
   ) => void;
   updateOrderItemDB: () => Promise<any[] | undefined>;
   hasContextRan: boolean;
+  fetchOrders: () => void;
 }
 
 // Create the context with default values (use `undefined` initially)

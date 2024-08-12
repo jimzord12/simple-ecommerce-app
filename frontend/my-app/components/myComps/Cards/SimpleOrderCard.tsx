@@ -8,6 +8,7 @@ import { MdDeleteForever } from "react-icons/md";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/lib/showToast";
+import { revalidatePath } from "next/cache";
 
 type SimpleOrderCardProps = {
   order: Order;
@@ -17,7 +18,7 @@ const SimpleOrderCard: React.FC<SimpleOrderCardProps> = ({ order }) => {
   const router = useRouter();
 
   async function handleOrderDelete() {
-    const res = await fetch(`/api/orders/delete/${order.order_id}`, {
+    const res = await fetch(`/api/orders/${order.order_id}`, {
       method: "DELETE",
     });
 
@@ -28,6 +29,7 @@ const SimpleOrderCard: React.FC<SimpleOrderCardProps> = ({ order }) => {
     }
 
     router.refresh();
+    // revalidatePath("/orders");
   }
 
   return (

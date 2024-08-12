@@ -2,12 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { showToast } from "@/lib/showToast";
 import confetti from "canvas-confetti";
 import { Order } from "@/types/db_custom_types";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { CartItemType } from "@/types/types";
+import OrdersContext from "@/context/OrderContext";
 
 type OrderItem = {
   product_id: number;
@@ -51,6 +52,16 @@ const OrderDetailsPage = ({ params }: { params: { id: string } }) => {
 
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const orderContext = useContext(OrdersContext);
+
+  if (!orderContext) {
+    throw new Error(
+      "OrderDetailsPage must be used within an OrderContextProvider",
+    );
+  }
+
+  const { fetchOrders } = orderContext;
 
   useEffect(() => {
     console.log("The Order ID: ", orderId);
@@ -176,10 +187,13 @@ const OrderDetailsPage = ({ params }: { params: { id: string } }) => {
           <Button
             variant="outline"
             size="lg"
-            onClick={() => router.push("/products")}
+            onClick={() => {
+              router.push("/orders");
+              fetchOrders();
+            }}
             className="text-white"
           >
-            Back to Products
+            Go to Orders
           </Button>
         </div>
       </div>

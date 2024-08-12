@@ -48,13 +48,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-screen">
       <body className={inter.className + " min-h-screen"}>
-        <CustomerProvider>
-          <OrderContextProvider>
-            <StockContextProvider>
+        <StockContextProvider>
+          <CustomerProvider>
+            <OrderContextProvider>
               <CartContextProvider>{children}</CartContextProvider>
-            </StockContextProvider>
-          </OrderContextProvider>
-        </CustomerProvider>
+            </OrderContextProvider>
+          </CustomerProvider>
+        </StockContextProvider>
         <ToastContainer />
       </body>
     </html>

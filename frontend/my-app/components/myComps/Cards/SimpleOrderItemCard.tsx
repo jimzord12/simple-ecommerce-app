@@ -4,15 +4,16 @@ import { Order, OrderItem } from "@/types/db_custom_types";
 import { Button } from "../../ui/button";
 import { MdDeleteForever, MdEditSquare } from "react-icons/md";
 import { FiPlus, FiMinus } from "react-icons/fi";
-import { useRouter } from "next/navigation";
 import StockContext from "@/context/StockContext";
-import { useContext, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useRef, useState } from "react";
 import { showToast } from "@/lib/showToast";
 import OrderContext from "@/context/OrderContext";
 
 type SimpleOrderItemCardProps = {
   orderItem: OrderItem;
   order: Order;
+  counters: { id: number; counter: number }[];
+  setCounters: Dispatch<SetStateAction<{ id: number; counter: number }[]>>;
   // onIncrement: () => void;
   // onDecrement: () => void;
   // onEdit: () => void;
@@ -21,6 +22,8 @@ type SimpleOrderItemCardProps = {
 const SimpleOrderItemCard: React.FC<SimpleOrderItemCardProps> = ({
   orderItem,
   order,
+  counters,
+  setCounters,
   // onIncrement,
   // onDecrement,
   // onEdit,
@@ -34,10 +37,14 @@ const SimpleOrderItemCard: React.FC<SimpleOrderItemCardProps> = ({
     );
   }
 
-  const { products, isLoading } = stockContext;
+  const incrementCalled = useRef(0);
+  const decrementCalled = useRef(0);
+
+  const { products, isLoading, decreaseStockBy, increaseStockBy } =
+    stockContext;
   const { orders, updateOrderItemLocally } = orderContext;
 
-  const item = products.find(
+  const productItem = products.find(
     (product) => product.product_id === orderItem.product_id,
   );
 
@@ -57,13 +64,8 @@ const SimpleOrderItemCard: React.FC<SimpleOrderItemCardProps> = ({
     (oi) => oi.order_item_id === orderItem.order_item_id,
   );
 
-  if (item === undefined) {
+  if (productItem === undefined) {
     showToast("error", "Item not Found");
-    return null;
-  }
-
-  if (actualOrderIdx === -1) {
-    showToast("error", "Order Index not Found");
     return null;
   }
 
@@ -72,10 +74,37 @@ const SimpleOrderItemCard: React.FC<SimpleOrderItemCardProps> = ({
     return null;
   }
 
+  if (orders[actualOrderIdx].items === null) {
+    showToast("error", "Order Items not Found");
+    return null;
+  }
+
   const handleIncrement = () => {
+    incrementCalled.current += 1;
+
+    console.log("[Increment Qnt]: Counters: ", counters);
+    console.log("[Increment Qnt]: Ref: ", incrementCalled.current);
+
+    const counterIdx = counters.findIndex(
+      (c) => c.id === orderItem.order_item_id,
+    );
+    if (counterIdx === -1) {
+      throw new Error("Counter not found");
+    }
     try {
-      updateOrderItemLocally(order.order_id, orderItem.order_item_id, 1, item);
-      actualItem.stock_quantity -= 1;
+      updateOrderItemLocally(
+        order.order_id,
+        orderItem.order_item_id,
+        1,
+        productItem,
+        counters[counterIdx].counter + 1,
+      );
+      decreaseStockBy(actualItem.product_id, 1);
+      setCounters((prev) => {
+        const newCounters = [...prev];
+        newCounters[counterIdx].counter += 1;
+        return newCounters;
+      });
     } catch (error) {
       if (error instanceof Error) {
         showToast("error", error.message);
@@ -86,9 +115,31 @@ const SimpleOrderItemCard: React.FC<SimpleOrderItemCardProps> = ({
   };
 
   const handleDecrement = () => {
+    decrementCalled.current += 1;
+
+    console.log("[Decrement Qnt]: Counters: ", counters);
+    console.log("[Decrement Qnt]: Ref: ", decrementCalled.current);
+    const counterIdx = counters.findIndex(
+      (c) => c.id === orderItem.order_item_id,
+    );
+    if (counterIdx === -1) {
+      throw new Error("Counter not found");
+    }
     try {
-      updateOrderItemLocally(order.order_id, orderItem.order_item_id, -1, item);
-      actualItem.stock_quantity += 1;
+      updateOrderItemLocally(
+        order.order_id,
+        orderItem.order_item_id,
+        -1,
+        productItem,
+        counters[counterIdx].counter - 1,
+      );
+      increaseStockBy(actualItem.product_id, 1);
+
+      setCounters((prev) => {
+        const newCounters = [...prev];
+        newCounters[counterIdx].counter -= 1;
+        return newCounters;
+      });
     } catch (error) {
       if (error instanceof Error) {
         showToast("error", error.message);
@@ -109,10 +160,19 @@ const SimpleOrderItemCard: React.FC<SimpleOrderItemCardProps> = ({
   return (
     <div className="mb-4 flex items-center justify-between rounded-lg bg-zinc-700 bg-opacity-45 p-4">
       <div>
-        <h2 className="text-xl text-white">{item?.product_name}</h2>
+        <h2 className="text-xl text-white">{productItem?.product_name}</h2>
         <p className="text-sm text-gray-400">
           Quantity: {orders[actualOrderIdx].items[actualItemIdx].quantity} |
-          Unit Price: ${item.price.toFixed(2)}
+          Unit Price: ${productItem.price.toFixed(2)} | Difference:{" "}
+          {
+            counters.find((oi) => {
+              console.log("Counters: ", counters);
+              console.log("CounterItem: ", oi);
+              console.log("Order Item: ", orderItem);
+              console.log("Condition: ", oi.id === orderItem.order_item_id);
+              return oi.id === orderItem.order_item_id;
+            })?.counter
+          }
         </p>
       </div>
       <div className="flex items-center gap-2">

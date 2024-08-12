@@ -2,8 +2,6 @@
 
 import SimpleOrderCard from "@/components/myComps/Cards/SimpleOrderCard";
 import { useContext, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import useAuth from "@/hooks/useAuth";
 import { showToast } from "@/lib/showToast";
 import { useRouter } from "next/navigation";
@@ -21,7 +19,7 @@ const OrdersPage = () => {
     throw new Error("OrdersPage must be used within an OrderContextProvider");
   }
 
-  const { orders, error, isLoading } = orderContext;
+  const { orders, error, isLoading, fetchOrders } = orderContext;
 
   useEffect(() => {
     const msg = checkAuth();

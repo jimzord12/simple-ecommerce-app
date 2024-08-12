@@ -30,7 +30,7 @@ const formSchema = z
     (data) => {
       return data.password === data.passwordConfirm;
     },
-    { message: "Passwords do not match", path: ["passwordConfirm"] }
+    { message: "Passwords do not match", path: ["passwordConfirm"] },
   );
 
 const SignUpForm = ({}) => {
@@ -79,7 +79,7 @@ const SignUpForm = ({}) => {
     if (response.ok) {
       console.log("Login Success");
       setIsSuccess(true);
-      router.push("/products");
+      router.push("/login");
     }
   };
 

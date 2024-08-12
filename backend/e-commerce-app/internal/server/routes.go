@@ -584,45 +584,46 @@ func UpdateOrderItem(w http.ResponseWriter, r *http.Request) {
 	oi.ID, _ = strconv.Atoi(id)
 	oi.OrderID, _ = strconv.Atoi(orderID)
 
-	// Getting Product ID using Order Item ID
-	err := db.QueryRow("SELECT product_id FROM order_items WHERE order_item_id = $1", id).Scan(&oi.ProductID)
-	if err == sql.ErrNoRows {
-		http.Error(w, "Product not found", http.StatusNotFound)
-		return
-	} else if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	// // Getting Product ID using Order Item ID
+	// err := db.QueryRow("SELECT product_id FROM order_items WHERE order_item_id = $1", id).Scan(&oi.ProductID)
+	// if err == sql.ErrNoRows {
+	// 	http.Error(w, "Product not found", http.StatusNotFound)
+	// 	return
+	// } else if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
 
 	// Getting Product Info using Product ID
-	var p Product
+	// var p Product
 
-	err = db.QueryRow("SELECT price, stock_quantity FROM products WHERE product_id = $1", oi.ProductID).Scan(&p.Price, &p.Stock)
-	if err == sql.ErrNoRows {
-		http.Error(w, "Product not found", http.StatusNotFound)
-		return
-	} else if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	// err := db.QueryRow("SELECT price, stock_quantity FROM products WHERE product_id = $1", oi.ProductID).Scan(&p.Price, &p.Stock)
+	// if err == sql.ErrNoRows {
+	// 	http.Error(w, "Product not found", http.StatusNotFound)
+	// 	return
+	// } else if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
 
-	if p.Stock < oi.Quantity {
-		http.Error(w, fmt.Sprintf("Insufficient Stock Quantity for Product (%s)", p.Name), http.StatusUnprocessableEntity)
-		return
-	}
+	// if p.Stock < oi.Quantity {
+	// 	http.Error(w, fmt.Sprintf("Insufficient Stock Quantity for Product (%s)", p.Name), http.StatusUnprocessableEntity)
+	// 	return
+	// }
 
 	// Decreasing the Stock Quantity of the Product
-	newQuantity := p.Stock - oi.Quantity
-	_, err = db.Exec(
-		"UPDATE products SET stock_quantity=$1 WHERE product_id=$2",
-		newQuantity, oi.ProductID)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	// newQuantity := p.Stock - oi.Diff
+	// _, err = db.Exec(
+	// 	"UPDATE products SET stock_quantity=$1 WHERE product_id=$2",
+	// 	newQuantity, oi.ProductID)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
 
+	// Updating Order Item
 	price := float64(oi.Quantity) * p.Price
-	_, err = db.Exec("UPDATE order_items SET quantity=$1, price=$2 WHERE order_item_id=$3 AND order_id=$4",
+	_, err := db.Exec("UPDATE order_items SET quantity=$1, price=$2 WHERE order_item_id=$3 AND order_id=$4",
 		oi.Quantity, price, oi.ID, oi.OrderID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

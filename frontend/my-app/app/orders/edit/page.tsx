@@ -12,11 +12,15 @@ import OrderContext from "@/context/OrderContext";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { OrderItem } from "@/types/db_custom_types";
 import confetti from "canvas-confetti";
+import { revalidatePath } from "next/cache";
 
 const EditOrdersPage = () => {
   const { checkAuth } = useAuth();
   const router = useRouter();
   const [orderItems, setOrderItems] = useState<OrderItem[] | null>(null);
+  const [orderItemsCounters, setOrderItemsCounters] = useState<
+    { id: number; counter: number }[]
+  >([]);
 
   const params = useSearchParams();
   const id = params.get("id");
@@ -31,11 +35,17 @@ const EditOrdersPage = () => {
     );
   }
 
-  const { orders, getOrderItems, isLoading, updateOrderItemDB, hasContextRan } =
-    orderContext;
-  console.log("All the Orders: ", orders);
+  const {
+    orders,
+    getOrderItems,
+    isLoading,
+    updateOrderItemDB,
+    hasContextRan,
+    fetchOrders,
+  } = orderContext;
+  // console.log("All the Orders: ", orders);
   const order = orders.find((order) => order.order_id === Number(id));
-  console.log("The Orders: ", order);
+  // console.log("The Orders: ", order);
 
   const [error, setError] = useState<string | null>(null);
   const [isItemsLoading, setIsItemsLoading] = useState(true);
@@ -59,15 +69,38 @@ const EditOrdersPage = () => {
       try {
         const orderItems = await getOrderItems(order!);
         setOrderItems(orderItems);
+
+        console.log("[EditOrder]: fethcOrderItems -> orderItems: ", orderItems);
+        const orderItemsInitCounts = orderItems.map((item) => {
+          return { id: item.order_item_id, counter: 0 };
+        });
+
+        console.log(
+          "[EditOrder]: fethcOrderItems -> orderItemsInitCounts: ",
+          orderItemsInitCounts,
+        );
+        setOrderItemsCounters(orderItemsInitCounts);
+
         setIsItemsLoading(false);
       } catch (error) {
         console.log(error);
-        setError("Failed to fetch order items");
+        setError("Failed to fetch order items. Better Delete the Order");
         setIsItemsLoading(false);
       }
     }
-    fethcOrderItems();
-  }, [getOrderItems, hasContextRan, id, order, orders, orders.length]);
+    if (orderItems?.length === 0 || !orderItems) {
+      fethcOrderItems();
+    }
+  }, [
+    getOrderItems,
+    hasContextRan,
+    id,
+    order,
+    orderItems,
+    orderItems?.length,
+    orders,
+    orders.length,
+  ]);
 
   useEffect(() => {
     if (!hasContextRan) {
@@ -89,6 +122,7 @@ const EditOrdersPage = () => {
   const handleUpdateOrder = async () => {
     try {
       // Implement your logic to update the order here.
+      //TODO:
       await updateOrderItemDB();
       showToast("success", "Order updated successfully!");
 
@@ -106,10 +140,22 @@ const EditOrdersPage = () => {
         angle: 0,
       });
 
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+      // setOrderItemsCounters([]);
+
       // router.push(`/order-details/${id}`);
+      // revalidatePath(`orders/edit?id=${id}`);
     } catch (error) {
-      console.error("Error updating order:", error);
-      showToast("error", "Failed to update the order. Please try again.");
+      if (error instanceof Error) {
+        if (error.message === "No items to update") {
+          showToast("error", "No items to update");
+        }
+      } else {
+        console.error("Error updating order:", error);
+        showToast("error", "Failed to update the order. Please try again.");
+      }
     }
   };
 
@@ -198,6 +244,8 @@ const EditOrdersPage = () => {
                   orderItem={item}
                   order={order}
                   key={item.order_id}
+                  counters={orderItemsCounters}
+                  setCounters={setOrderItemsCounters}
                 />
               </div>
             ))}
@@ -207,9 +255,13 @@ const EditOrdersPage = () => {
                   Total Price:{" "}
                   <span className="font-semibold">
                     $
-                    {orders[actualOrderIdx].items
-                      .reduce((sum, currentItem) => sum + currentItem.price, 0)
-                      .toFixed(2)}
+                    {orders[actualOrderIdx] &&
+                      orders[actualOrderIdx].items
+                        .reduce(
+                          (sum, currentItem) => sum + currentItem.price,
+                          0,
+                        )
+                        .toFixed(2)}
                   </span>
                 </h2>
               </div>

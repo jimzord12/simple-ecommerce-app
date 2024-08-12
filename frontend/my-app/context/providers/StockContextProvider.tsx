@@ -2,23 +2,25 @@
 "use client";
 
 import { useState, FC, useEffect } from "react";
-import MyContext, { StockContextState } from "../StockContext";
+import StockContext, { StockContextState } from "../StockContext";
 import { Product } from "../../types/db_custom_types";
 
 // Define the initial state
 const initialState: StockContextState = [] as Product[];
 
 const MyProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
-
   const [products, setProducts] = useState<StockContextState>(initialState);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [reRender, setReRender] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         console.log("Fetching products");
-        const res = await fetch("/api/products");
+        const res = await fetch("/api/products", {
+          cache: "no-store",
+        });
         if (!res.ok) {
           throw new Error("Failed to fetch products");
         }
@@ -32,8 +34,11 @@ const MyProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     };
 
     fetchProducts();
-  }, []);
+  }, [reRender]);
 
+  const fetchProducts = () => {
+    setReRender((prev) => !prev);
+  };
 
   const decreaseStockBy = (id: number, amount: number) => {
     const product = products.find((product) => product.product_id === id);
@@ -94,7 +99,7 @@ const MyProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <MyContext.Provider
+    <StockContext.Provider
       value={{
         products,
         setProducts,
@@ -103,11 +108,12 @@ const MyProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
         addProduct,
         removeProduct,
         error,
-        isLoading
+        isLoading,
+        fetchProducts,
       }}
     >
       {children}
-    </MyContext.Provider>
+    </StockContext.Provider>
   );
 };
 

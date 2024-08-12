@@ -16,6 +16,7 @@ export interface StockContextType {
   error: string | null;
   // setError: React.Dispatch<React.SetStateAction<string | null>>;
   isLoading: boolean;
+  fetchProducts: () => void;
 }
 
 // Create the context with default values (use `null` or initial values)
