@@ -4,9 +4,11 @@
 
 - [PostgreSQL - Official Page](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
 
-**PostgreSQL** is the app/service that will run on your computer in the background. It 
+**PostgreSQL** is the app/service that will run on your computer in the background.
 
-**pgAdmin** is GUI (Graphical User Interface) for PostgreSQL. It makes it a lot easier to create and manage our PostgreSQL databases.
+We can use through their CLI tool, but a GUI tool offers a better Developer Experience, therefore we shall use:
+
+**pgAdmin** a GUI (Graphical User Interface) tool for PostgreSQL. It makes it a lot easier to create and manage our PostgreSQL databases.
 
 **⚠ Very Important** 
 
