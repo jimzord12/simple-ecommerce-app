@@ -6,6 +6,10 @@
 - **CRUD Operation on**: Customers, Products, Orders and Order Items
 - **DB Schema**: ![DB Schema](./readmeImgs/DB_Schema.png)
 
+## Youtube Demo Video
+
+Click [here]([https://youtu.be/bAkFfh0kU7s](https://youtu.be/jALdXOQESMI)) to see the Demo in Youtube 📹
+
 ## Getting this Repo and setting it up (For the Beginners)
 
 ### Things you must install
