@@ -11,7 +11,7 @@ Regarding installing PostgreSQL and creating a Database read this: [PostgreSQL R
 
 You will need to download and install the Go Programming Language [Official download](https://go.dev/doc/install)
 
-> Wanna test the API using an API clients? While developing I used [Bruno](https://www.usebruno.com/) a [Postman](https://www.postman.com/) Alternative. In the `backend/e-commerce-app/api_testing` are the Request collections.
+> Wanna test the API using an API client? While developing I used [Bruno](https://www.usebruno.com/) a [Postman](https://www.postman.com/) Alternative. In the `backend/e-commerce-app/api_testing` are the Request collections.
 
 Now we need to download the Backend's dependencies (aka, code other devs have written so that we don't have to 😁)
 
