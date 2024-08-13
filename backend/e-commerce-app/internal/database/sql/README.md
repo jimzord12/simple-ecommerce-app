@@ -10,9 +10,9 @@ We can use through their CLI tool, but a GUI tool offers a better Developer Expe
 
 **pgAdmin** a GUI (Graphical User Interface) tool for PostgreSQL. It makes it a lot easier to create and manage our PostgreSQL databases.
 
-## Don't like reading? Me too!
+> ## Don't like reading? Me too!
 
-Check my [video tutorial](https://youtu.be/bAkFfh0kU7s) in Youtube 📹
+> Check my [video tutorial](https://youtu.be/bAkFfh0kU7s) in Youtube 📹
 
 **⚠ Very Important** 
 
