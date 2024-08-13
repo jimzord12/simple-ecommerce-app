@@ -8,7 +8,7 @@
 
 ## Youtube Demo Video
 
-Click [here](https://youtu.be/bAkFfh0kU7s](https://youtu.be/jALdXOQESMI) to see the Demo in Youtube 📹
+Click [here](https://youtu.be/jALdXOQESMI) to see the Demo in Youtube 📹
 
 ## Getting this Repo and setting it up (For the Beginners)
 
